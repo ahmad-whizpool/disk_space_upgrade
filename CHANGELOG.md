@@ -6,3 +6,6 @@
 
 ## 0.0.3
 - Fix registerChannel issue
+
+## 0.0.4 
+- Update andoid to support JAVA_17

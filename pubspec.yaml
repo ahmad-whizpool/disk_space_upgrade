@@ -1,6 +1,6 @@
 name: disk_space_upgrade
 description: A tiny Flutter Plugin to show free and total disk space.
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/ahmad-whizpool/disk_space_upgrade.git
 
 environment:
