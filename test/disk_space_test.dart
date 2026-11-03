@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:disk_space_upgrade/disk_space_upgrade.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   const MethodChannel channel = MethodChannel('disk_space_upgrade');
 
   setUp(() {

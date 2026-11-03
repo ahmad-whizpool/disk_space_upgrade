@@ -15,11 +15,11 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
 
-    // Verify that platform version is retrieved.
+    // Verify that disk space widget is displayed.
     expect(
       find.byWidgetPredicate(
         (Widget widget) =>
-            widget is Text && widget.data.startsWith('Running on:'),
+            widget is Text && (widget.data?.startsWith('Space on device') ?? false),
       ),
       findsOneWidget,
     );

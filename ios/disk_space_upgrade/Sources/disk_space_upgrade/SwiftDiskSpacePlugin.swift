@@ -10,41 +10,44 @@ public class SwiftDiskSpacePlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
+    case "getPlatformVersion":
+        result("iOS " + UIDevice.current.systemVersion)
     case "getFreeDiskSpace":
         result(UIDevice.current.freeDiskSpaceInMB)
     case "getTotalDiskSpace":
         result(UIDevice.current.totalDiskSpaceInMB)
     case "getFreeDiskSpaceForPath":
-        result(UIDevice.current.freeDiskSpaceForPathInMB(path: (call.arguments as? [String: String])!["path"]!))
+        if let args = call.arguments as? [String: Any],
+           let path = args["path"] as? String {
+            result(UIDevice.current.freeDiskSpaceForPathInMB(path: path))
+        } else {
+            result(FlutterError(code: "INVALID_ARGUMENT", message: "Path is required", details: nil))
+        }
     default:
-        result(0.0)
+        result(FlutterMethodNotImplemented)
     }
-    result("iOS " + UIDevice.current.systemVersion)
-
   }
 }
 
 extension UIDevice {
-    var totalDiskSpaceInMB:Double {
+    var totalDiskSpaceInMB: Double {
         return Double(totalDiskSpaceInBytes / (1024 * 1024))
     }
 
-    var freeDiskSpaceInMB:Double {
+    var freeDiskSpaceInMB: Double {
         return Double(freeDiskSpaceInBytes / (1024 * 1024))
     }
 
-    var usedDiskSpaceInMB:Double {
+    var usedDiskSpaceInMB: Double {
         return Double(usedDiskSpaceInBytes / (1024 * 1024))
     }
     
     public func freeDiskSpaceForPathInMB(path: String) -> Double {
         return Double(freeDiskSpaceForPathInBytes(path: path) / (1024 * 1024))
     }
-    
-    
 
     //MARK: Get raw value
-    var totalDiskSpaceInBytes:Int64 {
+    var totalDiskSpaceInBytes: Int64 {
         guard let systemAttributes = try? FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory() as String),
             let space = (systemAttributes[FileAttributeKey.systemSize] as? NSNumber)?.int64Value else { return 0 }
         return space
@@ -55,7 +58,7 @@ extension UIDevice {
      Examples: A video that the user has explicitly requested to watch but has not yet finished watching or an audio file that the user has requested to download.
      This value should not be used in determining if there is room for an irreplaceable resource. In the case of irreplaceable resources, always attempt to save the resource regardless of available capacity and handle failure as gracefully as possible.
      */
-    var freeDiskSpaceInBytes:Int64 {
+    var freeDiskSpaceInBytes: Int64 {
         if #available(iOS 11.0, *) {
             if let space = try? URL(fileURLWithPath: NSHomeDirectory() as String).resourceValues(forKeys: [URLResourceKey.volumeAvailableCapacityForImportantUsageKey]).volumeAvailableCapacityForImportantUsage {
                 return space ?? 0
@@ -72,7 +75,7 @@ extension UIDevice {
         }
     }
 
-    var usedDiskSpaceInBytes:Int64 {
+    var usedDiskSpaceInBytes: Int64 {
        return totalDiskSpaceInBytes - freeDiskSpaceInBytes
     }
     
@@ -91,8 +94,6 @@ extension UIDevice {
                 return 0
             }
         }
-        
     }
-
 }
 
